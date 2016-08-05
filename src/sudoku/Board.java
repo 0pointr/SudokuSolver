@@ -5,7 +5,6 @@
  */
 package sudoku;
 
-import java.util.Arrays;
 import java.util.Stack;
 
 /**
@@ -29,9 +28,6 @@ public class Board {
         init2DArray(colCheck);
         init2DArray(gridCheck);
         preProcess();
-        
-        
-        //System.out.format("%s ", Arrays.toString(board[4][3].domain));
     }
     
     public final void init2DArray (boolean[][] arr) {
@@ -42,6 +38,7 @@ public class Board {
         }
     }
     
+    // reduce the domains and init the supports
     private void preProcess () {
         for (int i=0; i<9; i++) {
             for (int j=0; j<9; j++) {
@@ -88,28 +85,14 @@ public class Board {
         return valid;
     }
     
+    // a board element is deleted afte being assigned for once
+    // during backtracking
     private void reinitElement (Element e) {
         e.reset();
         e.currVal = 0;
-        
-        /*
-        e.domain[e.currVal-1] = false;
-        for (int i=0; i<9; i++) {
-            if (rowCheck[e.r][i] == true)
-                e.domain[i] = false;
-        }
-        for (int i=0; i<9; i++) {
-            if (colCheck[i][e.c] == true)
-                e.domain[i] = false;
-        }
-        int gridN = getGridNo(e.r, e.c);
-        for (int i=0; i<9; i++) {
-            if (gridCheck[gridN][i] == true)
-                e.domain[i] = false;
-        }
-                */
     }
     
+// make modifications to support structires in add event
     private void updateSupportAdd (Element e, int oldVal) {
         int gridN = getGridNo(e.r, e.c);
         
@@ -124,6 +107,7 @@ public class Board {
         gridCheck[gridN][e.currVal-1] = true;
     }
     
+    // make modifications to support structires in delete event
     private void updateSupportDelete (Element e, int oldVal) {
         rowCheck[e.r][oldVal-1] = false;
         colCheck[e.c][oldVal-1] = false;
@@ -150,7 +134,7 @@ public class Board {
             if (!tmp.fixed) {       // fixed are given vals
                 int oldVal = tmp.currVal;
                 
-                if (tmp.setNextValue() == -1) {     // get next assignment
+                if (tmp.setNextValue() == -1) {         // get next assignment
                     updateSupportDelete(tmp, oldVal);
                     reinitElement(tmp);
                     stk.pop();
@@ -163,8 +147,8 @@ public class Board {
                         reinitElement(tmp);
                         stk.pop();
                         breakFlag = true;
-                        if (lastPopd)
-                            updateSupportDelete(tmp, oldVal);
+                        if (lastPopd)                           // supports were modified if an assignment occured in past
+                            updateSupportDelete(tmp, oldVal);   // signified by if the op in the last iter on stack was a pop
                         lastPopd = true;
                         break;
                     }
@@ -173,7 +157,7 @@ public class Board {
                     continue;
                 }
                 
-                updateSupportAdd(tmp, oldVal);      // need to reset prev set value if any
+                updateSupportAdd(tmp, oldVal);
                 lastPopd = false;
             }
             else if (lastPopd == true) {
