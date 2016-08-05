@@ -12,11 +12,11 @@ import java.util.Arrays;
  * @author debd_admin
  */
 public class Element {
-    boolean[] domain;
-    boolean[] orig;
-    boolean fixed;
-    int currVal;
-    final int r, c;
+    boolean[] domain;   // the domain
+    boolean[] orig;     // copy of orig domain after pruning non-avaialable values
+    boolean fixed;      // whether a element fixed on the board
+    int currVal;        // current index in domain+1
+    final int r, c;     // coord in board
 
     public Element(int currVal, int r, int c, boolean fixed) {
         this.currVal = currVal;
@@ -41,6 +41,7 @@ public class Element {
         System.arraycopy(orig, 0, domain, 0, 9);
     }
     
+    // set and get the next possible value assignment from the domain
     public int setNextValue () {
         if (currVal == 0)
             currVal = 1;

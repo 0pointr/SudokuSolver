@@ -38,7 +38,7 @@ public class Board {
         }
     }
     
-    // reduce the domains and init the supports
+    // reduce the domains and init the support data structures
     private void preProcess () {
         for (int i=0; i<9; i++) {
             for (int j=0; j<9; j++) {
@@ -56,6 +56,7 @@ public class Board {
                 }
             }
         }
+        // save a copy of the domain in current state
         for (int i=0; i<9; i++) {
             for (int j=0; j<9; j++) {
             board[i][j].setOrig(board[i][j].domain);
@@ -85,14 +86,14 @@ public class Board {
         return valid;
     }
     
-    // a board element is deleted afte being assigned for once
-    // during backtracking
+    // reinit a board element when deleted afte being assigned for once
+    // happens during backtracking
     private void reinitElement (Element e) {
         e.reset();
         e.currVal = 0;
     }
     
-// make modifications to support structires in add event
+    // make modifications to support structures in add event
     private void updateSupportAdd (Element e, int oldVal) {
         int gridN = getGridNo(e.r, e.c);
         
@@ -107,7 +108,7 @@ public class Board {
         gridCheck[gridN][e.currVal-1] = true;
     }
     
-    // make modifications to support structires in delete event
+    // make modifications to support structures in delete event
     private void updateSupportDelete (Element e, int oldVal) {
         rowCheck[e.r][oldVal-1] = false;
         colCheck[e.c][oldVal-1] = false;
